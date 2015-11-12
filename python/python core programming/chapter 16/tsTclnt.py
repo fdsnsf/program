@@ -13,7 +13,7 @@ while True:
 	data = raw_input('>')
 	if not data:
 		break
-	tcpCliSock.send(data)
+	tcpCliSock.send('%s\r\n' % data)
 	data = tcpCliSock.recv(BUFSIZE)
 	if not data:
 		break
