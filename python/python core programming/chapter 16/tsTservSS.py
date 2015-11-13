@@ -18,6 +18,7 @@ print 'waiting for connection...'
 try:
 	tcpServ.serve_forever()
 except KeyboardInterrupt, e:
+	tcpServ.server_close()
 	print 'server close...'
 
 		
