@@ -19,6 +19,8 @@ try:
 			data = tcpCliSock.recv(BUFSIZE)
 			if not data:
 				break
+			print data
+			data = raw_input('>')
 			tcpCliSock.send('[%s] %s' % (ctime(), data))
 		tcpCliSock.close()
 except KeyboardInterrupt, e:
