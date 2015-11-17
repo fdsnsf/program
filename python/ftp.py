@@ -88,6 +88,8 @@ if __name__ == '__main__':
 
 		except Exception, e:
 			print 'ERROR: ',e 
+			if raw_input('is quit y/n: ') == 'y':
+				break
 		
 
 
