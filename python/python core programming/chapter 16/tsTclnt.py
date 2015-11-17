@@ -11,6 +11,9 @@ ADDR = (HOST,PORT)
 def sendData(socket):
 	while True:
 		data = raw_input('>')
+		if data == '\r' or data.isspace():
+			print 'message can not be empty ...'
+			continue
 		if data == 'q':
 			break
 		socket.send('[%s] %s' % (ctime(), data))

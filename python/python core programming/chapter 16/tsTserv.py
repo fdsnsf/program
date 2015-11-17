@@ -15,6 +15,9 @@ tcpSerSock.listen(1)
 def sendData(socket):
 	while True:
 		data = raw_input('>')
+		if data.isspace():
+			print 'message can not be empty ...'
+			continue
 		if data == 'q':
 			break
 		socket.send('[%s] %s' % (ctime(), data))
