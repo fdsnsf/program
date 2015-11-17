@@ -13,12 +13,12 @@ class Ftp(object):
 	def __init__(self, host, user, passwd):
 		self.f = ftplib.FTP(host)
 		try:
-			self.f.login(user, passwd)
+			print self.f.login(user, passwd)
 		except Exception, e:
 			self.quit()
 			raise e
 	def  quit(self):
-		self.f.quit()
+		return self.f.quit()
 
 	def  cwd(self, dirn):
 		print self.f.cwd(dirn)
@@ -35,6 +35,11 @@ class Ftp(object):
 
 	def rename(self, old, new):
 		self.f.rename(old, new)
+
+	def dir(self):
+		return self.f.dir()
+	def pwd(self):
+		print self.f.pwd()
 
 
 
@@ -54,18 +59,35 @@ class Ftp(object):
 if __name__ == '__main__':
 	if len(sys.argv) < 4:
 		print 'please input host, user, passwd'
+		os._exit(0)
 	ftp = Ftp(sys.argv[1], sys.argv[2], sys.argv[3])
 	while True:
 		try:
-			cmd = raw_imput('>:')
-			parms = cmd.split(',')
-			if cmd[0] == 'quit' or cmd[0] == 'q':
-				ftp.quit()
+			cmd = raw_input('>:')
+			parms = cmd.split()
+			if parms[0] == 'quit' or parms[0] == 'q':
+				print ftp.quit()
 				break
-			elif cmd[0] == 'cwd':
+			elif parms[0] == 'cd' or parms[0] == 'cwd':
 				ftp.cwd(parms[1])
+			elif parms[0] == 'dir' or parms[0] == 'ls':
+				ftp.dir()
+			elif parms[0] == 'd' or parms[0] == 'download':
+				ftp.download(parms[1])
+			elif parms[0] == 'pwd':
+				ftp.pwd()
+			elif parms[0] == 'u' or parms[0] == 'upload':
+				ftp.upload(parms[1])
+			elif parms[0] == 'r' or parms[0] == 'rename':
+				ftp.rename(parms[1], parms[2])
+			else:
+				print ('---- q or quit 退出      ---- cd or cwd 切换目录\n'
+				       '---- d or download 下载  ---- pwd  获取当前目录\n'
+				       '---- u or upload 上传    ---- ls or dir 获取当前目录内容\n'
+				       '---- r or rename 修改文件名\n')
+
 		except Exception, e:
-			print 'ERROR ' 
+			print 'ERROR: ',e 
 		
 
 
