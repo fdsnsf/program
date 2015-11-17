@@ -4,17 +4,20 @@ from time import ctime
 import threading
 
 HOST = 'localhost'
-PORT = 21567
+PORT = 21569
 BUFSIZE = 1024
 ADDR = (HOST,PORT)
 
 def sendData(socket):
 	while True:
 		data = raw_input('>')
-		if data == '\r' or data.isspace():
+		if data == '' or data.isspace():
 			print 'message can not be empty ...'
 			continue
 		if data == 'q':
+			socket.send(data)
+			socket.close()
+			print 'close ...'
 			break
 		socket.send('[%s] %s' % (ctime(), data))
 
