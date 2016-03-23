@@ -30,8 +30,6 @@ def post(url, values):
 	return res
 
 def crawler01():
-	#ziru
-	url = 'http://www.ziroom.com/z/nl/z3.html?p=1'
 	url2 = 'http://www.heibanke.com/lesson/crawler_ex00/'
 	nextUrl = '62816'
 
