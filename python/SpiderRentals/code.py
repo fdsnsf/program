@@ -16,14 +16,16 @@ class LocationType(object):
 	def __init__(self, type_name):
 		
 		self.type_name = type_name
+		self.areas = dict()
 
-	def add_area(area_name, area):
-		if area_name not in areas:
-			areas[area_name] = area
-			url_count += 1
+	def add_area(self, area_name, area):
+		if area_name not in self.areas:
+			self.areas[area_name] = area
+			self.url_count += 1
 
-	def get_area():
-		return areas
+	def get_area_by_name(self, area_name):
+		return self.areas[area_name]
+
 
 class Area(object):
 	"""docstring for Area"""
@@ -35,16 +37,17 @@ class Area(object):
 
 	def __init__(self, name):
 		self.name = name
-		
-	def add_location(location):
+		self.locations = list()
 
-		locations.append(location)
-		location_count += 1
+	def add_location(self, location):
 
-	def get_location():
-		return locations
+		self.locations.append(location)
+		self.location_count += 1
 
-class Location:
+	def get_location(self):
+		return self.locations
+
+class Location(object):
 
 	name = ''
 	url = ''
@@ -84,30 +87,40 @@ def analyze():
 	type_name = ''
 	area_name = ''
 	location_name = ''
-	LocationType locations = LocationType('')
-	urls = list()
+	
+	urls = dict()
 
 	for data in datas:
 		type_match = type_p.search(data)
 		area_match = area_p.search(data)
 		location_match = location_p.search(data)
+
 		if type_match:
 			type_name = type_match.group('type_name')
+			urls[type_name] = LocationType(type_name)
+
 		elif area_match:
 			area_name = area_match.group('area')
+			urls[type_name].add_area(area_name, Area(area_name))
+
 		elif location_match:
+			l_name = location_match.group('location')
+			l_url = location_match.group('url')
+			if type_name in urls:
+				urls[type_name].get_area_by_name(area_name).add_location(Location(l_name, l_url))
 
-
-	return search_type
+	return urls
 
 
 
 if __name__ == '__main__':
 	#catch() 
-	search_type = analyze()
-	print search_type
-	for s in search_type:
+	result = analyze()
+	#print search_type
+	for s in result:
+		print '----*****----'
 		print s.decode('utf-8')
-		for p in search_type[s]:
+		print '-------------'
+		for p in result[s].areas:
 			print p.decode('utf-8')
 
