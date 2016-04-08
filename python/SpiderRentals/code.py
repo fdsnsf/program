@@ -117,10 +117,19 @@ if __name__ == '__main__':
 	#catch() 
 	result = analyze()
 	#print search_type
+	#s.decode('utf-8')
+	interval = '----*****----\n'
+	url_result = open('ziru/url', 'w')
 	for s in result:
-		print '----*****----'
-		print s.decode('utf-8')
-		print '-------------'
+		url_result.write(interval)
+		url_result.write(s+'\n')
+		url_result.write(interval)
 		for p in result[s].areas:
-			print p.decode('utf-8')
+			url_result.write(interval)
+			url_result.write(p+'\n')
+			url_result.write(interval)
+			for l in result[s].areas[p].get_location():
+				url_result.write(l.name+' '+l.url+'\n')
+
+	url_result.close()
 
