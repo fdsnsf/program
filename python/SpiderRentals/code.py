@@ -9,7 +9,7 @@ class LocationType(object):
 	"""docstring for Urls"""
 
 	type_name =  ''
-	url = ''
+	urls = list()
 	areas = dict()
 	url_count = 0
 
@@ -17,6 +17,7 @@ class LocationType(object):
 		
 		self.type_name = type_name
 		self.areas = dict()
+		self.urls = list()
 
 	def add_area(self, area_name, area):
 		if area_name not in self.areas:
@@ -25,6 +26,9 @@ class LocationType(object):
 
 	def get_area_by_name(self, area_name):
 		return self.areas[area_name]
+
+	def add_other_url(self, location):
+		self.urls.append(location)
 
 
 class Area(object):
@@ -74,7 +78,7 @@ def catch():
 	page.close()
 
 
-def analyze():
+def analyze_url():
 
 	page = open('ziru/z3.html')
 	datas = page.readlines()
@@ -82,11 +86,10 @@ def analyze():
 	
 	type_p = re.compile(r'<dt>(?P<type_name>.*)：</dt>')
 	area_p = re.compile(r'<span class="tag"><a href="(?P<url>.*)">(?P<area>.*)</a') 
-	location_p = re.compile(r'<a href="(?P<url>.*)" >(?P<location>.*)</a>')
+	location_p = re.compile(r'<a.*href="(?P<url>.*)"\s?>(?P<location>.*)</a>')
 	search_type = dict()
 	type_name = ''
 	area_name = ''
-	location_name = ''
 	
 	urls = dict()
 
@@ -97,7 +100,11 @@ def analyze():
 
 		if type_match:
 			type_name = type_match.group('type_name')
-			urls[type_name] = LocationType(type_name)
+			if type_name == '更多':
+				type_name = ''
+				area_name = ''
+			else:
+				urls[type_name] = LocationType(type_name)
 
 		elif area_match:
 			area_name = area_match.group('area')
@@ -106,8 +113,12 @@ def analyze():
 		elif location_match:
 			l_name = location_match.group('location')
 			l_url = location_match.group('url')
+			l = Location(l_name, l_url)
 			if type_name in urls:
-				urls[type_name].get_area_by_name(area_name).add_location(Location(l_name, l_url))
+				if area_name in urls[type_name].areas:
+					urls[type_name].get_area_by_name(area_name).add_location(l)
+				else:
+					urls[type_name].add_other_url(l)
 
 	return urls
 
@@ -115,7 +126,7 @@ def analyze():
 
 if __name__ == '__main__':
 	#catch() 
-	result = analyze()
+	result = analyze_url()
 	#print search_type
 	#s.decode('utf-8')
 	interval = '----*****----\n'
@@ -124,6 +135,10 @@ if __name__ == '__main__':
 		url_result.write(interval)
 		url_result.write(s+'\n')
 		url_result.write(interval)
+
+		for k in result[s].urls:
+			url_result.write(k.name+' '+k.url+'\n')
+
 		for p in result[s].areas:
 			url_result.write(interval)
 			url_result.write(p+'\n')
