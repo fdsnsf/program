@@ -55,10 +55,25 @@ class Location(object):
 
 	name = ''
 	url = ''
+	rooms = list()
 
 	def __init__(self, name, url):
 		self.name = name
 		self.url = url
+		self.rooms = list()
+
+class Room(object):
+	"""docstring for Room"""
+	price = 0
+	url = ''
+	detail = ''
+	name = ''
+	style = ''
+	subway = ''
+	address = ''
+
+	def __init__(self, name):
+		self.name = name
 
 
 def get(url):
@@ -124,7 +139,7 @@ def analyze_url():
 
 
 
-if __name__ == '__main__':
+def url_test():
 	#catch() 
 	result = analyze_url()
 	#print search_type
@@ -147,4 +162,8 @@ if __name__ == '__main__':
 				url_result.write(l.name+' '+l.url+'\n')
 
 	url_result.close()
+
+if __name__ == '__main__':
+
+	#url_test()
 
