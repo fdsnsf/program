@@ -3,7 +3,8 @@
 import urllib2
 import re
 import sys
-
+import pickle
+import string
 
 class LocationType(object):
 	"""docstring for Urls"""
@@ -66,14 +67,36 @@ class Room(object):
 	"""docstring for Room"""
 	price = 0
 	url = ''
-	detail = ''
 	name = ''
 	style = ''
 	subway = ''
 	address = ''
+	# 面积
+	area = ''
+	# 楼层
+	floor = ''	
+	# 格局
+	pattern = ''
+	# 合租类型
+	roommate_type = ''
 
-	def __init__(self, name):
+	def __init__(self, name, price, url,style, subway, address, area,
+		floor, pattern, roommate_type):
 		self.name = name
+		self.price = price
+		self.url = url
+		self.style = style
+		self.subway = subway
+		self.address = address
+		self.area = area
+		self.floor = floor
+		self.pattern = pattern
+		self.roommate_type = roommate_type
+
+	def print_room(self):
+		return ('%s ---- %s ---- %s ---- %s ---- %s ---- %s ---- %s ---- %s ---- %s ---- %s' 
+			% (self.name, self.price, self.url, self.style, self.subway, self.address, 
+				self.area, self.floor, self.pattern, self.roommate_type))
 
 
 def get(url):
@@ -93,11 +116,7 @@ def catch():
 	page.close()
 
 
-def analyze_url():
-
-	page = open('ziru/z3.html')
-	datas = page.readlines()
-	page.close()
+def analyze_url(datas):
 	
 	type_p = re.compile(r'<dt>(?P<type_name>.*)：</dt>')
 	area_p = re.compile(r'<span class="tag"><a href="(?P<url>.*)">(?P<area>.*)</a') 
@@ -138,10 +157,99 @@ def analyze_url():
 	return urls
 
 
+def analyze_room(datas):
 
-def url_test():
+	start_p = re.compile(r'<li  class="clearfix">')
+	end_p = re.compile(r'</li>')
+	name_p = re.compile(r'<h3>.*href="(?P<url>.*)" class.*>(?P<name>.*)</a>')
+	address_p = re.compile(r'<h4>')
+	style_p = re.compile(r'class="style">(?P<style>.*)</span>')
+	subway_p = re.compile(r'class="subway">(?P<subway>.*)</span>')
+	price_p = re.compile(r'class="price">￥(?P<price>.*)<span')
+	area_p = re.compile(r'<span>(?P<area>.*)㎡</span>')
+	floor_p = re.compile(r'  <span>(?P<floor>.*层)</span>')	
+	pattern_p = re.compile(r' <span>(?P<pattern>\d室\d厅)</span>')
+	roommate_type_p = re.compile(r'class="icons">(?P<type>.*)</span>')
+
+	name = ''
+	price = 0
+	url = ''
+	style = ''
+	subway = ''
+	address = ''
+	area = ''
+	floor = ''	
+	pattern = ''
+	roommate_type = ''
+
+	result = list()
+	is_start = False
+	address_start = -1
+
+	for data in datas:
+		start_m = start_p.search(data)
+
+		if start_m:
+			is_start = True
+			name, price, url, style, subway, address, area, floor, pattern, roommate_type = ('', 0, '', '', '', 
+				'', '', '', '', '')
+			continue
+		if is_start:
+			end_m = end_p.search(data)
+			name_m = name_p.search(data)
+			address_m = address_p.search(data)
+			style_m = style_p.search(data)
+			subway_m = subway_p.search(data)
+			price_m = price_p.search(data)
+			area_m = area_p.search(data)
+			floor_m = floor_p.search(data)
+			pattern_m = pattern_p.search(data)
+			roommate_type_m = roommate_type_p.search(data)
+
+			if address_start > -1 and address_start<2:
+				data = string.strip(data)
+				d = data.split()
+				address += d[0]
+				address_start += 1
+			if address_start>= 2:
+				address_start = -1
+
+			if name_m:
+				name = name_m.group('name')
+				url = name_m.group('url')
+				continue
+			if area_m:
+				area = area_m.group('area')
+			if floor_m:
+				floor = floor_m.group('floor')
+			if pattern_m:
+				pattern = pattern_m.group('pattern')
+			if roommate_type_m:
+				roommate_type = roommate_type_m.group('type')
+			elif address_m:
+				address_start = 0
+				continue
+			elif style_m:
+				style = style_m.group('style')
+			elif subway_m:
+				subway = subway_m.group('subway')
+			elif price_m:
+				price = price_m.group('price')
+			elif end_m:
+				result.append(Room(name, int(price), url, style, subway, address, area,
+					floor, pattern, roommate_type))
+				is_start = False
+
+	output = open('ziru/data', 'w')
+	#pickle.dump(result, output)
+	for r in result:
+		output.write(r.print_room() + '\n')
+	output.close()
+
+
+def url_test(datas):
 	#catch() 
-	result = analyze_url()
+	result = analyze_url(datas)
 	#print search_type
 	#s.decode('utf-8')
 	interval = '----*****----\n'
@@ -165,5 +273,10 @@ def url_test():
 
 if __name__ == '__main__':
 
-	#url_test()
+	page = open('ziru/z3.html')
+	datas = page.readlines()
+	page.close()
+
+	analyze_room(datas)
+	#url_test(datas)
 
