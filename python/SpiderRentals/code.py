@@ -94,7 +94,7 @@ class Room(object):
 		self.roommate_type = roommate_type
 
 	def print_room(self):
-		return ('%s ---- %s ---- %s ---- %s ---- %s ---- %s ---- %s ---- %s ---- %s ---- %s' 
+		return ('%s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s' 
 			% (self.name, self.price, self.url, self.style, self.subway, self.address, 
 				self.area, self.floor, self.pattern, self.roommate_type))
 
@@ -240,11 +240,13 @@ def analyze_room(datas):
 					floor, pattern, roommate_type))
 				is_start = False
 
-	output = open('ziru/data', 'w')
+	return result
+
+	#output = open('ziru/data', 'w')
 	#pickle.dump(result, output)
-	for r in result:
-		output.write(r.print_room() + '\n')
-	output.close()
+	#for r in result:
+	#	output.write(r.print_room() + '\n')
+	#output.close()
 
 
 def url_test(datas):
@@ -271,12 +273,38 @@ def url_test(datas):
 
 	url_result.close()
 
+def down_data():
+
+	url_template = 'http://www.ziroom.com/z/nl/z3.html?p='
+	data_dump = open('ziru/data_dump', 'a')
+	data_json = open("ziru/data_json", 'a')
+	#data_temp = open("ziru/data_temp", 'w+')
+
+	for page in range(1,5):
+		url = url_template + str(page)
+		print 'start down ...  '+url
+		datas = get(url)
+		data_temp = open("ziru/data_temp", 'w+')
+		data_temp.write(datas)
+		data_temp.close()
+		data_temp = open("ziru/data_temp")
+		result = analyze_room(data_temp.readlines())
+		pickle.dump(result, data_dump)
+		for r in result:
+			data_json.write(r.print_room() + '\n')
+
+	data_dump.close()
+	data_temp.close()
+	data_json.close()
+
 if __name__ == '__main__':
 
-	page = open('ziru/z3.html')
-	datas = page.readlines()
-	page.close()
+	#page = open('ziru/z3.html')
+	#datas = page.readlines()
+	#page.close()
 
-	analyze_room(datas)
+	#analyze_room(datas)
 	#url_test(datas)
+
+	down_data()
 
