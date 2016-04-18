@@ -280,10 +280,11 @@ def down_data():
 	data_json = open("ziru/data_json", 'a')
 	#data_temp = open("ziru/data_temp", 'w+')
 
-	for page in range(1,5):
+	for page in range(60,250):
 		url = url_template + str(page)
 		print 'start down ...  '+url
 		datas = get(url)
+		print 'analyze ...'
 		data_temp = open("ziru/data_temp", 'w+')
 		data_temp.write(datas)
 		data_temp.close()
@@ -305,6 +306,9 @@ if __name__ == '__main__':
 
 	#analyze_room(datas)
 	#url_test(datas)
-
-	down_data()
+	try:
+		#down_data()
+	except BaseException, e:
+		print e
+	
 
