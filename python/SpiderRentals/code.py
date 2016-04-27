@@ -279,8 +279,9 @@ def down_data():
 	data_dump = open('ziru/data_dump', 'a')
 	data_json = open("ziru/data_json", 'a')
 	#data_temp = open("ziru/data_temp", 'w+')
+	result = list()
 
-	for page in range(60,250):
+	for page in range(1,250):
 		url = url_template + str(page)
 		print 'start down ...  '+url
 		datas = get(url)
@@ -289,14 +290,35 @@ def down_data():
 		data_temp.write(datas)
 		data_temp.close()
 		data_temp = open("ziru/data_temp")
-		result = analyze_room(data_temp.readlines())
-		pickle.dump(result, data_dump)
-		for r in result:
+		dd = analyze_room(data_temp.readlines())
+		result.extend(dd)
+		for r in dd:
 			data_json.write(r.print_room() + '\n')
 
+	pickle.dump(result, data_dump)
 	data_dump.close()
 	data_temp.close()
 	data_json.close()
+
+
+
+def analy_test():
+
+	data_file = open('ziru/data_dump') 
+	datas = pickle.load(data_file)
+	data_file.close()
+
+	result_file = open('ziru/data', 'w')
+	count = 0
+	datas.sort(key=lambda x:x.price)
+	for data in datas:
+		count += 1
+		if data.address.find('东城') != -1 and int(data.price) < 2000:
+			result_file.write(data.print_room() + '\n')
+			#print data.name, data.area, data.price, data.address
+		#print data.price
+	print count
+	result_file.close()
 
 if __name__ == '__main__':
 
@@ -308,6 +330,7 @@ if __name__ == '__main__':
 	#url_test(datas)
 	try:
 		#down_data()
+		analy_test()
 	except BaseException, e:
 		print e
 	
