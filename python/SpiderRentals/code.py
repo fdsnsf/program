@@ -6,6 +6,8 @@ import sys
 import pickle
 import string
 
+import draw
+
 class LocationType(object):
 	"""docstring for Urls"""
 
@@ -80,6 +82,8 @@ class Room(object):
 	# 合租类型
 	roommate_type = ''
 
+	region = ''
+
 	def __init__(self, name, price, url,style, subway, address, area,
 		floor, pattern, roommate_type):
 		self.name = name
@@ -94,9 +98,9 @@ class Room(object):
 		self.roommate_type = roommate_type
 
 	def print_room(self):
-		return ('%s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s' 
+		return ('%s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s' 
 			% (self.name, self.price, self.url, self.style, self.subway, self.address, 
-				self.area, self.floor, self.pattern, self.roommate_type))
+				self.area, self.floor, self.pattern, self.roommate_type, self.region))
 
 
 def get(url):
@@ -310,15 +314,41 @@ def analy_test():
 
 	result_file = open('ziru/data', 'w')
 	count = 0
-	datas.sort(key=lambda x:x.price)
+	region_p = re.compile(r'\[(?P<region>.*)\]')
+	region = ''
+	#datas.sort(key=lambda x:x.price)
+	x = list()
+	y = list()
+	x_name = dict()
 	for data in datas:
-		count += 1
-		if data.address.find('东城') != -1 and int(data.price) < 2000:
-			result_file.write(data.print_room() + '\n')
+		#if data.address.find('东城') != -1 and int(data.price) < 2000:
+		#if count < 5:
+			region_m = region_p.search(data.address)
+			if region_m:
+				region = region_m.group('region')
+				#print region
+				if region not in x_name:
+					count += 1
+					x_name[region] = count
+				x.append(x_name[region])
+				y.append(int(data.price))
+
+			#result_file.write(data.print_room() + '\n')
 			#print data.name, data.area, data.price, data.address
 		#print data.price
-	print count
+	#print count
+	s = sorted(x_name.iteritems(), key=lambda x_name:x_name[1])
+	for name in s:
+		result_file.write(str(name[1]) + " " +name[0]+ " ")
 	result_file.close()
+	
+	draw.scatterplot(x,y,'priceDistributed')
+
+def set_region():
+	data_file = open('ziru/data_dump') 
+	datas = pickle.load(data_file)
+	data_file.close()
+
 
 if __name__ == '__main__':
 

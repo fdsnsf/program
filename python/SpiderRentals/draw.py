@@ -1,6 +1,8 @@
 #encoding=utf-8
 
 import numpy as np
+#import matplotlib
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pylab as pl
 
@@ -13,6 +15,13 @@ import pylab as pl
 # y yellow
 # k black
 # w white
+
+
+def scatterplot(x, y, name):
+	pl.plot(x, y, 'oc')
+	#pl.show()
+	pl.savefig(name+'.jpg')
+
 
 def test2():
 	x = [1, 2, 3, 4, 5]
@@ -35,5 +44,8 @@ def test1():
 
 	plt.show()
 
+def test3():
+	scatterplot([1,3,1,2,3],[2,5,4,4,3])
+
 if __name__ == '__main__':
-	test2()
+	test3()
