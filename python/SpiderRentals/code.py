@@ -81,8 +81,12 @@ class Room(object):
 	pattern = ''
 	# 合租类型
 	roommate_type = ''
-
+	#
 	region = ''
+	#
+	subway_station = ''
+	#
+	sub_region = ''
 
 	def __init__(self, name, price, url,style, subway, address, area,
 		floor, pattern, roommate_type):
@@ -98,9 +102,10 @@ class Room(object):
 		self.roommate_type = roommate_type
 
 	def print_room(self):
-		return ('%s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s' 
+		return ('%s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s' 
 			% (self.name, self.price, self.url, self.style, self.subway, self.address, 
-				self.area, self.floor, self.pattern, self.roommate_type, self.region))
+				self.area, self.floor, self.pattern, self.roommate_type, self.region, 
+				self.subway_station, self.sub_region))
 
 
 def get(url):
@@ -312,42 +317,91 @@ def analy_test():
 	datas = pickle.load(data_file)
 	data_file.close()
 
-	result_file = open('ziru/data', 'w')
+	#result_file = open('ziru/data', 'w')
 	count = 0
-	region_p = re.compile(r'\[(?P<region>.*)\]')
+	#region_p = re.compile(r'\[(?P<region>.*)\]')
 	region = ''
 	#datas.sort(key=lambda x:x.price)
 	x = list()
 	y = list()
 	x_name = dict()
 	for data in datas:
+		count += 1
 		#if data.address.find('东城') != -1 and int(data.price) < 2000:
-		#if count < 5:
-			region_m = region_p.search(data.address)
-			if region_m:
-				region = region_m.group('region')
+		if count < 5:
+			print data.print_room()
+			#region_m = region_p.search(data.address)
+			#if region_m:
+			#	region = region_m.group('region')
 				#print region
-				if region not in x_name:
-					count += 1
-					x_name[region] = count
-				x.append(x_name[region])
-				y.append(int(data.price))
+				#if region not in x_name:
+				#	count += 1
+				#	x_name[region] = count
+				#x.append(x_name[region])
+				#y.append(int(data.price))
 
 			#result_file.write(data.print_room() + '\n')
 			#print data.name, data.area, data.price, data.address
 		#print data.price
 	#print count
-	s = sorted(x_name.iteritems(), key=lambda x_name:x_name[1])
-	for name in s:
-		result_file.write(str(name[1]) + " " +name[0]+ " ")
-	result_file.close()
+	#s = sorted(x_name.iteritems(), key=lambda x_name:x_name[1])
+	#for name in s:
+	#	result_file.write(str(name[1]) + " " +name[0]+ " ")
+	#result_file.close()
 	
-	draw.scatterplot(x,y,'priceDistributed')
+	#draw.scatterplot(x,y,'priceDistributed')
 
-def set_region():
+def set_other_info():
 	data_file = open('ziru/data_dump') 
 	datas = pickle.load(data_file)
 	data_file.close()
+
+	region_p = re.compile(r'\[(?P<region>.*)\]')
+	subway_p = re.compile(r'\](?P<subway>.*线)')
+	sub_region_p = re.compile(r'线(?P<subre>.*)')
+	for data in datas:
+		region_m = region_p.search(data.address)
+		subway_m = subway_p.search(data.address)
+		sub_region_m = sub_region_p.search(data.address)
+		if region_m:
+			region = region_m.group('region')
+			data.region = region
+		if subway_m:
+			data.subway_station = subway_m.group('subway')
+		if sub_region_m:
+			data.sub_region = sub_region_m.group('subre')
+	data_dump = open('ziru/data_dump1', 'w')
+	pickle.dump(datas, data_dump)
+	data_dump.close()
+
+def analy_data():
+
+	data_file = open('ziru/data_dump') 
+	datas = pickle.load(data_file)
+	data_file.close()
+
+	x = list()
+	y = list()
+	x_name_dic = dict()
+	count = 0
+	file_name = 'result/10_sub_region_price'
+	x_name_file = open(file_name, 'w')
+
+	for data in datas:
+		if data.subway_station == '10号线':
+			x_name = data.sub_region
+			if x_name not in x_name_dic:
+				count += 1
+				x_name_dic[x_name] = count
+
+			x.append(x_name_dic[x_name])
+			y.append(int(data.price))
+
+	s = sorted(x_name_dic.iteritems(), key=lambda x_name_dic:x_name_dic[1])
+	for n in s:
+		x_name_file.write(str(n[1]) + " " +n[0]+ " ")
+	x_name_file.close()
+	draw.scatterplot(x, y, file_name)
 
 
 if __name__ == '__main__':
@@ -359,8 +413,10 @@ if __name__ == '__main__':
 	#analyze_room(datas)
 	#url_test(datas)
 	try:
-		#down_data()
-		analy_test()
+		#down_data()	
+		#set_other_info()
+		#analy_test()
+		analy_data()
 	except BaseException, e:
 		print e
 	
