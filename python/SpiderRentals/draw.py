@@ -76,11 +76,29 @@ def test4():
 
 	plt.show()
 
+def test5():
+	n = 256
+	x = np.linspace(-np.pi,np.pi,n,endpoint=True)
+	y = np.sin(2*x)
 
+	plt.axes([0.02,0.02,0.98,0.98])
+
+	plt.plot(x, y+1, color='blue', alpha=1.00)
+	plt.plot(x, y-1, color='blue', alpha=1.00)
+	plt.fill_between(x, -1, y-1, (y-1)>-1, color='blue', alpha=0.25)
+	plt.fill_between(x, 1, y+1, color='blue', alpha=0.25)
+	plt.fill_between(x, -1, y-1, (y-1)<-1, color='red', alpha=0.25)
+
+	plt.xlim(-np.pi, np.pi)
+	plt.xticks([])
+	plt.ylim(-2.5,2.5)
+	plt.yticks([])
+
+	plt.show()
 
 if __name__ == '__main__':
 	try:
-		
+		test5()
 	except Exception, e:
 		print e
 	
