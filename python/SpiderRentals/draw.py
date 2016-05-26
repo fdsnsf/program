@@ -59,21 +59,28 @@ def test4():
 
 	plt.figure(figsize=(8,6), dpi=80)
 	plt.subplot(111)
+	plt.title('test')
 
 	x = np.linspace(-np.pi, np.pi, 256, endpoint=True)
 	c,s = np.cos(x), np.sin(x)
 
-	plt.plot(x, c, color='blue', linewidth=1.0, linestyle='-')
-	plt.plot(x, s, color='green', linewidth=1.0, linestyle='-')
+	plt.plot(x, c, color='blue', linewidth=3.0, linestyle='-', label='cosine')
+	plt.plot(x, s, color='green', linewidth=1.0, linestyle='-', label='sine')
+	plt.legend(loc='upper left', frameon=True)
 
-	plt.xlim(-4.0, 4.0)
-	
+	plt.xlim(x.min()*1.1, x.max()*1.1)
+	plt.xticks(np.linspace(-4,4,9,endpoint=True))
+	plt.ylim(c.min()*1.1, c.max()*1.1)
+	plt.yticks(np.linspace(-1,1,5,endpoint=True))
+
 
 	plt.show()
 
+
+
 if __name__ == '__main__':
 	try:
-		test4()
+		
 	except Exception, e:
 		print e
 	
