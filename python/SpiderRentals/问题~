@@ -1,9 +1,0 @@
-1.网页得抓取下拉，存成文件，再从文件中读取分析，能不能直接分析抓取的网页？(2016.4.18)
-    抓取网页代码，这个返回值并不能像文件那样按行读取：
-    def get(url):
-
-	req = urllib2.Request(url)
-	res_data = urllib2.urlopen(req)
-	res = res_data.read()
-
-	return res
