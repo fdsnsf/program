@@ -10,6 +10,7 @@ from matplotlib.animation import FuncAnimation
 
 fig = plt.figure(figsize=(6,6), facecolor='white')
 ax = fig.add_axes([0,0,1,1], frameon=False, aspect=1)
+#ax = fig.add_axes([0.005,0.005,0.990,0.990], frameon=True, aspect=1)
 
 #number of drip
 n = 50
@@ -28,7 +29,8 @@ scat = ax.scatter(p[:,0], p[:,1], s=s, lw=0.5,
 	edgecolors=c, facecolor='None')
 
 ax.set_xlim(0, 1), ax.set_xticks([])
-ax.set_ylim(0, 1), ax.set_yticks([])	
+ax.set_ylim(0, 1), ax.set_yticks([])
+
 
 def update(frame):
 	global p, c, s
@@ -43,10 +45,9 @@ def update(frame):
 	scat.set_edgecolors(c)
 	#scat.set_sizes(s)
 	scat.set_offsets(p)
+	return scat,
 
-	return scat
-
-#animation = FuncAnimation(fig, update, interval=10, blit=True, frames=200)
-#animation.save('rain.gif', writer='imagemagick', fps=30, dpi=40)
+animation = FuncAnimation(fig, update, interval=10, frames=200)
+#animation.save('result/rain.gif', writer='imagemagick', fps=30, dpi=40)
 
 plt.show()
