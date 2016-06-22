@@ -11,16 +11,12 @@ import draw
 class LocationType(object):
 	"""docstring for Urls"""
 
-	type_name =  ''
-	urls = list()
-	areas = dict()
-	url_count = 0
-
 	def __init__(self, type_name):
 		
 		self.type_name = type_name
 		self.areas = dict()
 		self.urls = list()
+		self.url_count = 0
 
 	def add_area(self, area_name, area):
 		if area_name not in self.areas:
@@ -37,14 +33,11 @@ class LocationType(object):
 class Area(object):
 	"""docstring for Area"""
 
-	name = ''
-	url = ''
-	locations = list()
-	location_count = 0
-
 	def __init__(self, name):
 		self.name = name
 		self.locations = list()
+		self.url = ''
+		self.location_count = 0
 
 	def add_location(self, location):
 
@@ -56,10 +49,6 @@ class Area(object):
 
 class Location(object):
 
-	name = ''
-	url = ''
-	rooms = list()
-
 	def __init__(self, name, url):
 		self.name = name
 		self.url = url
@@ -67,26 +56,6 @@ class Location(object):
 
 class Room(object):
 	"""docstring for Room"""
-	price = 0
-	url = ''
-	name = ''
-	style = ''
-	subway = ''
-	address = ''
-	# 面积
-	area = ''
-	# 楼层
-	floor = ''	
-	# 格局
-	pattern = ''
-	# 合租类型
-	roommate_type = ''
-	#
-	region = ''
-	#
-	subway_station = ''
-	#
-	sub_region = ''
 
 	def __init__(self, name, price, url,style, subway, address, area,
 		floor, pattern, roommate_type):
@@ -96,10 +65,17 @@ class Room(object):
 		self.style = style
 		self.subway = subway
 		self.address = address
+		# 面积
 		self.area = area
+		# 楼层
 		self.floor = floor
+		# 格局
 		self.pattern = pattern
+		# 合租类型
 		self.roommate_type = roommate_type
+		self.region = ''
+		self.subway_station = ''
+		self.sub_region = ''
 
 	def print_room(self):
 		return ('%s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s -- %s' 
@@ -384,11 +360,11 @@ def analy_data():
 	y = list()
 	x_name_dic = dict()
 	count = 0
-	file_name = 'result/10_sub_region_price'
+	file_name = 'result/61_sub_region_price'
 	x_name_file = open(file_name, 'w')
 
 	for data in datas:
-		if data.subway_station == '10号线':
+		if data.subway_station == '6号线':
 			x_name = data.sub_region
 			if x_name not in x_name_dic:
 				count += 1
